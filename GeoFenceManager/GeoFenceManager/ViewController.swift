@@ -14,26 +14,54 @@ struct Annotation {
     let coordinate : CLLocationCoordinate2D
 }
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UIGestureRecognizerDelegate {
     
     @IBOutlet weak var mapView: MKMapView!
     
     // set initial location in Honolulu
-    let initialLocation = CLLocation(latitude: 35.64703911754285, longitude: 139.72100891066896)
+    let initialLocation = CLLocation(latitude: 35.702701251324285, longitude: 139.83813956844944)
     let annotations = [
-        Annotation(title: "a", coordinate: CLLocationCoordinate2D(latitude: 35.657039976178427, longitude: 139.7020093657471)),
-        Annotation(title: "b", coordinate: CLLocationCoordinate2D(latitude: 35.647039224276535,
-                                                                  longitude: 139.656100511702883)),
-        Annotation(title: "c", coordinate: CLLocationCoordinate2D(latitude: 35.67603911754285,
-                                                                  longitude: 139.721009891066896)),
-        Annotation(title: "d", coordinate: CLLocationCoordinate2D(latitude: 35.678039433015687, longitude: 139.70100995833742)),
-        Annotation(title: "e", coordinate: CLLocationCoordinate2D(latitude: 35.637039224276535,
-                                                                  longitude: 139.7710095827881)),
-        Annotation(title: "f", coordinate: CLLocationCoordinate2D(latitude: 35.617039325842233,
-                                                                  longitude: 139.7200091911255)),
-        Annotation(title: "g", coordinate: CLLocationCoordinate2D(latitude: 35.60703954577244, longitude: 139.74100961428225)),
-        Annotation(title: "h", coordinate: CLLocationCoordinate2D(latitude: 35.687039800894, longitude: 139.70110946614992))
+        // water gate
+        Annotation(title: "a", coordinate: CLLocationCoordinate2D(latitude: 35.69250927401511,
+                                                                  longitude: 139.82028564064484)),
+        // cross bridge
+        Annotation(title: "b", coordinate: CLLocationCoordinate2D(latitude: 35.69388432949502,
+                                                                  longitude: 139.83427211440693)),
+        // cross pizza
+        Annotation(title: "c", coordinate: CLLocationCoordinate2D(latitude: 35.69424303572127,
+                                                                  longitude: 139.84347374188195)),
+        // longway gate
+        Annotation(title: "d", coordinate: CLLocationCoordinate2D(latitude: 35.69334626713055,
+                                                                  longitude: 139.8532642735155)),
+        // kameido gate
+        Annotation(title: "e", coordinate: CLLocationCoordinate2D(latitude: 35.700128975589266,
+                                                                  longitude: 139.84160178262596)),
+        // bt-way gate
+        Annotation(title: "f", coordinate: CLLocationCoordinate2D(latitude: 35.70326212347548,
+                                                                  longitude: 139.83540040508683)),
+        // view point
+        Annotation(title: "g", coordinate: CLLocationCoordinate2D(latitude: 35.71104063674558,
+                                                                  longitude: 139.83868889559488)),
+        // end of bt-way
+        Annotation(title: "h", coordinate: CLLocationCoordinate2D(latitude: 35.713670545610285,
+                                                                  longitude: 139.8339776623277))
     ]
+
+    
+    @objc func handleTap(_ gestureReconizer: UILongPressGestureRecognizer)
+    {
+        
+        let location = gestureReconizer.location(in: mapView)
+        let coordinate = mapView.convert(location,toCoordinateFrom: self.mapView)
+        
+        // Add annotation:
+//        let annotation = MKPointAnnotation()
+//        annotation.coordinate = coordinate
+//        self.mapView.addAnnotation(annotation)
+        
+        
+        print( coordinate )
+    }
     
     
     override func viewDidLoad() {
@@ -50,9 +78,15 @@ class ViewController: UIViewController {
             _ = GeoFenceManager.shared.startMonitoringGeoFence(radius: 100, location: obj.coordinate, identifier: obj.title, data: [:])
         }
         
+        
+        
+        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))
+        gestureRecognizer.delegate = self
+        self.mapView.addGestureRecognizer(gestureRecognizer)
+        
     }
     
-    let regionRadius: CLLocationDistance = 15000
+    let regionRadius: CLLocationDistance = 5000
     func centerMapOnLocation(location: CLLocation) {
         let coordinateRegion = MKCoordinateRegionMakeWithDistance(location.coordinate,
                                                                   regionRadius, regionRadius)

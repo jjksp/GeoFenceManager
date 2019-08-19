@@ -92,7 +92,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         // self.showToast(message: "test")
         
         self.prepareGeofence()
-        self.handleTextNoti(str: "test", dict: nil)
+        // self.handleTextNoti(str: "test", dict: nil)
     }
     
     
@@ -108,7 +108,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
             
             let region = CLCircularRegion(center: center, radius: 200.0, identifier: self.annotations[ii].title)
             region.notifyOnEntry = true
-            region.notifyOnExit = true
+            region.notifyOnExit = false     // true : NO GOOD for HH detect! but, silent noti will be good.
             let trigger = UNLocationNotificationTrigger(region: region, repeats: false)
             
             let content = UNMutableNotificationContent()
@@ -183,8 +183,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         content.sound = UNNotificationSound.default()
         
         // when the notification will be triggered
-        // var timeInSeconds: TimeInterval = (60 * 5)   // 60s * 5 = 5min
-        var timeInSeconds: TimeInterval = 60.0
+        var timeInSeconds: TimeInterval = (60 * 10)   // 60s * 5 = 5min
+        // var timeInSeconds: TimeInterval = 60.0
         // the actual trigger object
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: timeInSeconds,
                                                         repeats: true)

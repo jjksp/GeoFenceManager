@@ -13,50 +13,58 @@ import UserNotifications
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
     var window: UIWindow?
-    
-    // add the center property
-    var notificationCenter: UNUserNotificationCenter?
+
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
-        // get the singleton object
-        self.notificationCenter = UNUserNotificationCenter.current()
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests();
         
-        // register as it's delegate
-        self.notificationCenter!.delegate = self
-        
-        // define what do you need permission to use
-        let options: UNAuthorizationOptions = [.alert, .sound]
+        let center = UNUserNotificationCenter.current()
+        center.delegate = self
         
         // request permission
-        self.notificationCenter!.requestAuthorization(options: options) { (granted, error) in
-            if !granted {
-                print("Permission not granted")
+        if #available(iOS 10.0, *) {
+            let center = UNUserNotificationCenter.current()
+            center.requestAuthorization(options: [.badge, .sound, .alert]) { (granted, error) in
+                if error != nil {
+                    // エラー
+                    return
+                }
+                
+                if granted {
+                    // 通知許可された
+                } else {
+                    // 通知拒否
+                }
             }
+        } else {
+            let settings = UIUserNotificationSettings(types: [.badge, .sound, .alert], categories: nil)
+            UIApplication.shared.registerUserNotificationSettings(settings)
         }
         
         return true
     }
 
     
+    @available(iOS 10.0, *)
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 willPresent notification: UNNotification,
-                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        // when app is onpen and in foregroud
-        completionHandler([.alert,.sound])
+                                withCompletionHandler completionHandler: (UNNotificationPresentationOptions) -> Void) {
+        // Remote Notification
+        if notification.request.trigger is UNPushNotificationTrigger {
+            debugPrint("push Noti")
+            completionHandler([.sound, .alert])
+        } else {
+            // ...
+        }
     }
+
     
-    
+    @available(iOS 10.0, *)
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
-                                withCompletionHandler completionHandler: @escaping () -> Void) {
-        
-        // get the notification identifier to respond accordingly
-        let identifier = response.notification.request.identifier
-        
-        // do what you need to do
-        
-        // ...
+                                withCompletionHandler completionHandler: () -> Void) {
+        debugPrint("userNoti didReceive")
         completionHandler()
     }
     

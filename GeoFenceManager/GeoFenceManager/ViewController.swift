@@ -90,8 +90,45 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         // self.showToast(message: "test")
+        
+        self.prepareGeofence()
         self.handleTextNoti(str: "test", dict: nil)
     }
+    
+    
+    func prepareGeofence() {
+        // https://developer.apple.com/documentation/usernotifications/unlocationnotificationtrigger
+        
+        var identifier = ""
+        
+        for ii in 0...self.annotations.count-1 {
+            identifier = self.annotations[ii].title
+            let center = CLLocationCoordinate2D(latitude: self.annotations[ii].coordinate.latitude,
+                                                longitude: self.annotations[ii].coordinate.longitude)
+            
+            let region = CLCircularRegion(center: center, radius: 200.0, identifier: self.annotations[ii].title)
+            region.notifyOnEntry = true
+            region.notifyOnExit = true
+            let trigger = UNLocationNotificationTrigger(region: region, repeats: false)
+            
+            let content = UNMutableNotificationContent()
+            content.title = self.annotations[ii].title
+            content.body = self.annotations[ii].title
+            
+            // the notification request object
+            let request = UNNotificationRequest(identifier: self.annotations[0].title,
+                                                content: content,
+                                                trigger: trigger)
+            
+            // Local Notification
+            UNUserNotificationCenter.current().add(request, withCompletionHandler: { (error) in
+                if error != nil {
+                    print("Error adding notification with identifier: \(identifier)")
+                }
+            })
+        }   // end of for
+    }
+    
     
     
     let regionRadius: CLLocationDistance = 5000
@@ -136,9 +173,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         // customize your notification content
         let content = UNMutableNotificationContent()
         content.title = str
-        content.body = "test"
+        content.body = "test body"
         
-        var identifier = ""
+        var identifier = "test identifier"
         if dict != nil {
             identifier = dict!["identifier"] as? String ?? ""
             content.body = identifier
@@ -157,10 +194,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                                             content: content,
                                             trigger: trigger)
         
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        
-        // trying to add the notification request to notification center
-        appDelegate.notificationCenter!.add(request, withCompletionHandler: { (error) in
+        // Local Notification : trying to add the notification request to notification center
+        UNUserNotificationCenter.current().add(request, withCompletionHandler: { (error) in
             if error != nil {
                 print("Error adding notification with identifier: \(identifier)")
             }
@@ -190,10 +225,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                                             content: content,
                                             trigger: trigger)
         
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        
-        // trying to add the notification request to notification center
-        appDelegate.notificationCenter!.add(request, withCompletionHandler: { (error) in
+        // Local Notification : trying to add the notification request to notification center
+        UNUserNotificationCenter.current().add(request, withCompletionHandler: { (error) in
             if error != nil {
                 print("Error adding notification with identifier: \(identifier)")
             }

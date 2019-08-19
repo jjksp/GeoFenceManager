@@ -19,16 +19,20 @@ class ViewController: UIViewController {
     @IBOutlet weak var mapView: MKMapView!
     
     // set initial location in Honolulu
-    let initialLocation = CLLocation(latitude: 21.28983511754285, longitude: -157.70258891066896)
+    let initialLocation = CLLocation(latitude: 35.64703911754285, longitude: 139.72100891066896)
     let annotations = [
-        Annotation(title: "a", coordinate: CLLocationCoordinate2D(latitude: 21.300950976178427, longitude: -157.7094553657471)),
-        Annotation(title: "b", coordinate: CLLocationCoordinate2D(latitude: 21.296472745754965, longitude: -157.70400511702883)),
-        Annotation(title: "c", coordinate: CLLocationCoordinate2D(latitude: 21.28983511754285, longitude: -157.70258891066896)),
-        Annotation(title: "d", coordinate: CLLocationCoordinate2D(latitude: 21.294633433015687, longitude: -157.70915495833742)),
-        Annotation(title: "e", coordinate: CLLocationCoordinate2D(latitude: 21.289515224276535, longitude: -157.7240465827881)),
-        Annotation(title: "f", coordinate: CLLocationCoordinate2D(latitude: 21.275039325842233, longitude: -157.7070091911255)),
-        Annotation(title: "g", coordinate: CLLocationCoordinate2D(latitude: 21.29151454577244, longitude: -157.69057261428225)),
-        Annotation(title: "h", coordinate: CLLocationCoordinate2D(latitude: 21.303749800894, longitude: -157.69267546614992))
+        Annotation(title: "a", coordinate: CLLocationCoordinate2D(latitude: 35.657039976178427, longitude: 139.7020093657471)),
+        Annotation(title: "b", coordinate: CLLocationCoordinate2D(latitude: 35.647039224276535,
+                                                                  longitude: 139.656100511702883)),
+        Annotation(title: "c", coordinate: CLLocationCoordinate2D(latitude: 35.67603911754285,
+                                                                  longitude: 139.721009891066896)),
+        Annotation(title: "d", coordinate: CLLocationCoordinate2D(latitude: 35.678039433015687, longitude: 139.70100995833742)),
+        Annotation(title: "e", coordinate: CLLocationCoordinate2D(latitude: 35.637039224276535,
+                                                                  longitude: 139.7710095827881)),
+        Annotation(title: "f", coordinate: CLLocationCoordinate2D(latitude: 35.617039325842233,
+                                                                  longitude: 139.7200091911255)),
+        Annotation(title: "g", coordinate: CLLocationCoordinate2D(latitude: 35.60703954577244, longitude: 139.74100961428225)),
+        Annotation(title: "h", coordinate: CLLocationCoordinate2D(latitude: 35.687039800894, longitude: 139.70110946614992))
     ]
     
     
@@ -48,7 +52,7 @@ class ViewController: UIViewController {
         
     }
     
-    let regionRadius: CLLocationDistance = 5000
+    let regionRadius: CLLocationDistance = 15000
     func centerMapOnLocation(location: CLLocation) {
         let coordinateRegion = MKCoordinateRegionMakeWithDistance(location.coordinate,
                                                                   regionRadius, regionRadius)

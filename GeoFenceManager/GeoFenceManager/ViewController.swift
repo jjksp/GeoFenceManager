@@ -8,6 +8,7 @@
 
 import UIKit
 import MapKit
+import UserNotifications
 
 struct Annotation {
     let title : String
@@ -75,9 +76,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
             annotation.title = obj.title
             annotation.coordinate = obj.coordinate
             mapView.addAnnotation(annotation)
-            _ = GeoFenceManager.shared.startMonitoringGeoFence(radius: 100, location: obj.coordinate, identifier: obj.title, data: [:])
+            _ = GeoFenceManager.shared.startMonitoringGeoFence(radius: 200, location: obj.coordinate, identifier: obj.title, data: [:])
         }
-        
         
         
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))
@@ -85,6 +85,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         self.mapView.addGestureRecognizer(gestureRecognizer)
         
     }
+    
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // self.showToast(message: "test")
+        self.handleTextNoti(str: "test", dict: nil)
+    }
+    
     
     let regionRadius: CLLocationDistance = 5000
     func centerMapOnLocation(location: CLLocation) {
@@ -103,6 +111,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         if let dict = notification.userInfo as NSDictionary? {
             if  let identifier = dict["identifier"] as? String /*,let _ = dict["data"] as? [String:Any] */ {
                 self.showToast(message: "You Entered the Region: \(identifier)")
+                self.handleTextNoti(str: "You Entered the Region: \(identifier)", dict: dict)
             }
         }
     }
@@ -111,6 +120,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         if let dict = notification.userInfo as NSDictionary? {
             if let identifier = dict["identifier"] as? String /*,let _ = dict["data"] as? [String:Any] */ {
                 self.showToast(message: "You Left the Region: \(identifier)")
+                self.handleTextNoti(str: "You Left the Region: \(identifier)", dict: dict)
             }
         }
     }
@@ -119,6 +129,76 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         // Dispose of any resources that can be recreated.
     }
     
+    
+    
+    func handleTextNoti(str: String, dict: NSDictionary?) {
+        
+        // customize your notification content
+        let content = UNMutableNotificationContent()
+        content.title = str
+        content.body = "test"
+        
+        var identifier = ""
+        if dict != nil {
+            identifier = dict!["identifier"] as? String ?? ""
+            content.body = identifier
+        }
+        content.sound = UNNotificationSound.default()
+        
+        // when the notification will be triggered
+        // var timeInSeconds: TimeInterval = (60 * 5)   // 60s * 5 = 5min
+        var timeInSeconds: TimeInterval = 60.0
+        // the actual trigger object
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: timeInSeconds,
+                                                        repeats: true)
+        
+        // the notification request object
+        let request = UNNotificationRequest(identifier: identifier,
+                                            content: content,
+                                            trigger: trigger)
+        
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        
+        // trying to add the notification request to notification center
+        appDelegate.notificationCenter!.add(request, withCompletionHandler: { (error) in
+            if error != nil {
+                print("Error adding notification with identifier: \(identifier)")
+            }
+        })
+    }
+    
+    
+    func handleRegionNoti(forRegion region: CLRegion!) {
+        
+        // customize your notification content
+        let content = UNMutableNotificationContent()
+        content.title = "Awesome title"
+        content.body = "Well-crafted body message"
+        content.sound = UNNotificationSound.default()
+        
+        // when the notification will be triggered
+        var timeInSeconds: TimeInterval = (60 * 15) // 60s * 15 = 15min
+        // the actual trigger object
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: timeInSeconds,
+                                                        repeats: false)
+        
+        // notification unique identifier, for this example, same as the region to avoid duplicate notifications
+        let identifier = region.identifier
+        
+        // the notification request object
+        let request = UNNotificationRequest(identifier: identifier,
+                                            content: content,
+                                            trigger: trigger)
+        
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        
+        // trying to add the notification request to notification center
+        appDelegate.notificationCenter!.add(request, withCompletionHandler: { (error) in
+            if error != nil {
+                print("Error adding notification with identifier: \(identifier)")
+            }
+        })
+    }
     
 }
 

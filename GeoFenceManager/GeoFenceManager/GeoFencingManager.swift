@@ -70,6 +70,7 @@ class GeoFenceManager : NSObject{
         locationManager.startMonitoring(for: geofenceRegion)
         return true
     }
+    
     func stopAllMonitoringGeoFence() {
         if let dicIDs = UserDefaults.standard.dictionary(forKey: UDGeoFencIDs) as? [String : [String:Any]] {
             for (key , value) in dicIDs {
@@ -81,6 +82,7 @@ class GeoFenceManager : NSObject{
             UserDefaults.standard.removeObject(forKey: UDGeoFencIDs)
         }
     }
+    
     func stopMonitoringGeoFence(withId MatchId : String) {
         if let dicIDs = UserDefaults.standard.dictionary(forKey: UDGeoFencIDs) as? [String : [String:Any]] , let matchDic = dicIDs[MatchId] {
             if let lat = matchDic["lat"] as? CLLocationDegrees , let long = matchDic["long"] as? CLLocationDegrees , let radius = matchDic["radius"] as?  CLLocationDistance {
